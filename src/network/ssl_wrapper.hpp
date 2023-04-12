@@ -360,26 +360,26 @@ class Ssl {
 #else
   inline static std::unordered_set<std::string> GetLocalIpList() {
     std::unordered_set<std::string> ip_list;
-    struct ifaddrs * ifAddrStruct = NULL;
-    struct ifaddrs * ifa = NULL;
-    void * tmpAddrPtr = NULL;
+    // struct ifaddrs * ifAddrStruct = NULL;
+    // struct ifaddrs * ifa = NULL;
+    // void * tmpAddrPtr = NULL;
 
-    getifaddrs(&ifAddrStruct);
+    // getifaddrs(&ifAddrStruct);
 
-    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
-      if (!ifa->ifa_addr) {
-        continue;
-      }
-      if (ifa->ifa_addr->sa_family == AF_INET) {
-        // NOLINTNEXTLINE
-        tmpAddrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
-        char addressBuffer[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-        ip_list.insert(std::string(addressBuffer));
-        std::cout<<std::string(addressBuffer)<<std::endl;
-      }
-    }
-    if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
+    // for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
+    //   if (!ifa->ifa_addr) {
+    //     continue;
+    //   }
+    //   if (ifa->ifa_addr->sa_family == AF_INET) {
+    //     // NOLINTNEXTLINE
+    //     tmpAddrPtr = &((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
+    //     char addressBuffer[INET_ADDRSTRLEN];
+    //     inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
+    //     //ip_list.insert(std::string(addressBuffer));
+    //     std::cout<<"getifaddrs IP: "<<std::string(addressBuffer)<<std::endl;
+    //   }
+    // }
+    // if (ifAddrStruct != NULL) freeifaddrs(ifAddrStruct);
 
     int SockFD;
     SockFD = socket(AF_INET, SOCK_DGRAM, 0);
@@ -406,7 +406,8 @@ class Ssl {
                 printf("SIOCGIFHWADDR(%s): %m\n", ifreq.ifr_name);
                 // return 0;
             }
-            printf("Ip Address %s\n", inet_ntoa( ( (struct sockaddr_in *) &ifr->ifr_addr)->sin_addr));
+            ip_list.insert(std::string(inet_ntoa( ( (struct sockaddr_in *) &ifr->ifr_addr)->sin_addr)));
+            printf("ioctl Ip  %s\n", inet_ntoa( ( (struct sockaddr_in *) &ifr->ifr_addr)->sin_addr));
             // printf("Device %s -> Ethernet %02x:%02x:%02x:%02x:%02x:%02x\n", ifreq.ifr_name,
             //         (int) ((unsigned char *) &ifreq.ifr_hwaddr.sa_data)[0],
             //         (int) ((unsigned char *) &ifreq.ifr_hwaddr.sa_data)[1],
